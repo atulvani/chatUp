@@ -1,0 +1,43 @@
+<div layout="row" layout-fill>
+    <div flex-xs="0" flex-sm="40" flex-md="30" flex-lg="25">
+        <md-toolbar class="md-accent">
+            <div class="md-toolbar-tools">
+                <h2 md-truncate flex>Contacts</h2>
+            </div>
+        </md-toolbar>
+        <md-content>
+            <md-list flex>
+                <md-list-item class="md-3-line" ng-repeat="contact in vmHome.contactList" ng-click="vmHome.selectedContact = contact" md-colors="{background: vmHome.selectedContact === contact ? 'primary-50' : 'grey-50'}">
+                    <img ng-src="{{'http://lorempixel.com/200/200/people'}}" class="md-avatar" alt="{{contact.name}}" />
+                    <div class="md-list-item-text">
+                        <h3>{{contact.name}}</h3>
+                        <p>last seen 3 days ago</p>
+                    </div>
+                </md-list-item>
+            </md-list>
+        </md-content>
+    </div>
+    <md-divider></md-divider>
+    <div flex layout="column" layout-fill layout-align="spece-between streach">
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2 md-truncate flex>{{vmHome.selectedContact.name}}</h2>
+            </div>
+        </md-toolbar>
+        <md-content flex layout="column" layout-align="end">
+            <md-list flex>
+                <md-list-item ng-repeat="conversation in vmHome.conversationList">
+                    <img ng-src="{{'http://lorempixel.com/200/200/people'}}" class="md-avatar" alt="{{conversation.author.name}}" ng-if="conversation.author.name !== vmHome.selectedContact.name" />
+                    <div class="md-list-item-text" flex>
+                        <p>{{conversation.message}}</p>
+                    </div>
+                    <img ng-src="{{'http://lorempixel.com/200/200/people'}}" class="md-avatar" alt="{{conversation.author.name}}" ng-if="conversation.author.name === vmHome.selectedContact.name" />
+                </md-list-item>
+            </md-list>
+            <md-input-container>
+                <label>Message</label>
+                <textarea ng-model="vmHome.message" ng-keyup="$event.which === 13 && vmHome.postMessage()"></textarea>
+            </md-input-container>
+        </md-content>
+    </div>
+</div>

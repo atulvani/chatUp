@@ -2,7 +2,7 @@
 
 (function() {
     angular
-        .module('app', ['ngRoute', 'ngMaterial'])
+        .module('app', ['ngRoute', 'ngMaterial', 'ngSanitize'])
         .config(config)
         .controller('appController', appController);
 
@@ -13,18 +13,13 @@
         $routeProvider.when('/', {
             templateUrl: '/js/components/home/home.html',
             controller: 'homeController',
-            controllerAs: 'vmHome'
-        }).when('/home', {
-            templateUrl: '/js/components/home/home.html',
-            controller: 'homeController',
-            controllerAs: 'vmHome'
+            controllerAs: 'vmHome',
+            resolve: {auth: function (authService) { return authService.auth(); }}
         }).otherwise('/');
     }
 
     appController.$inject = [];
     function appController() {
         var vmApp = this;
-
-        vmApp.name = 'Atul Vani';
     }
 })();

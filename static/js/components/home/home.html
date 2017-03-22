@@ -1,14 +1,15 @@
 <div layout="row" layout-fill>
-    <div flex-xs="0" flex-sm="40" flex-md="30" flex-lg="25">
+    <div layout="column" hide-xs flex-sm="40" flex-md="30" flex-lg="25">
         <md-toolbar class="md-accent">
             <div class="md-toolbar-tools">
                 <h2 md-truncate flex>Contacts</h2>
             </div>
         </md-toolbar>
-        <md-content>
-            <md-list flex>
-                <md-list-item class="md-3-line" ng-repeat="contact in vmHome.contactList" ng-click="vmHome.selectedContact = contact" md-colors="{background: vmHome.selectedContact === contact ? 'primary-50' : 'grey-50'}">
-                    <img ng-src="{{'http://lorempixel.com/200/200/people'}}" class="md-avatar" alt="{{contact.name}}" />
+        <md-content flex md-colors="{background: 'grey-200'}">
+            <md-list>
+                <md-list-item class="md-3-line" ng-repeat="contact in vmHome.contactList" ng-click="vmHome.updateSelectedContact(contact)"
+                    md-colors="{background: vmHome.selectedContact === contact ? 'primary-50' : 'grey-50'}">
+                    <img ng-src="{{'http://lorempixel.com/200/200/people?' + contact.name}}" class="md-avatar" alt="{{contact.name}}" />
                     <div class="md-list-item-text">
                         <h3>{{contact.name}}</h3>
                         <p>last seen 3 days ago</p>
@@ -25,19 +26,27 @@
             </div>
         </md-toolbar>
         <md-content flex layout="column" layout-align="end">
-            <md-list flex>
-                <md-list-item ng-repeat="conversation in vmHome.conversationList">
-                    <img ng-src="{{'http://lorempixel.com/200/200/people'}}" class="md-avatar" alt="{{conversation.author.name}}" ng-if="conversation.author.name !== vmHome.selectedContact.name" />
+            <md-list flex md-colors="{background: 'primary-50'}">
+                <!-- TODO: user virtual repeat here -->
+                <md-list-item ng-repeat="conversation in vmHome.conversationList track by $index">
+                    <img ng-src="{{'http://lorempixel.com/200/200/people?' + conversation.author.name}}" class="md-avatar"
+                        alt="{{conversation.author.name}}" ng-if="conversation.author.name === vmHome.user.name" />
                     <div class="md-list-item-text" flex>
-                        <p>{{conversation.message}}</p>
+                        <pre>{{conversation.message}}</pre>
                     </div>
-                    <img ng-src="{{'http://lorempixel.com/200/200/people'}}" class="md-avatar" alt="{{conversation.author.name}}" ng-if="conversation.author.name === vmHome.selectedContact.name" />
+                    <img ng-src="{{'http://lorempixel.com/200/200/people?' + conversation.author.name}}" class="md-avatar"
+                        alt="{{conversation.author.name}}" ng-if="conversation.author.name !== vmHome.user.name" />
                 </md-list-item>
             </md-list>
-            <md-input-container>
-                <label>Message</label>
-                <textarea ng-model="vmHome.message" ng-keyup="$event.which === 13 && vmHome.postMessage()"></textarea>
-            </md-input-container>
+            <form ng-submit="vmHome.postMessage()" layout="row">
+                <md-input-container flex>
+                    <label>Message</label>
+                    <textarea ng-model="vmHome.message" ng-keyup="$event.which === 13 && !$event.shiftKey && vmHome.postMessage()"
+                    md-no-resize md-no-autogrow md-autofocus>
+                    </textarea>
+                </md-input-container>
+                <md-button type="submit" class="md-raised md-primary">Send</md-button>
+            </form>
         </md-content>
     </div>
 </div>

@@ -5,33 +5,41 @@
         .module('app')
         .controller('homeController', homeController);
 
-    homeController.$inject = [];
-    function homeController () {
+    homeController.$inject = ['homeService', '$sce', '$rootScope'];
+    function homeController (homeService, $sce, $rootScope) {
         var vmHome = this;
 
+        vmHome.user = $rootScope.user;
         vmHome.contactList = [];
         vmHome.selectedContact = null;
-        vmHome.conversationList = [];
+        vmHome.conversationList = []; // TODO: let service own and manipulate this data
+        vmHome.message = '';
 
+        vmHome.updateSelectedContact = updateSelectedContact;
         vmHome.postMessage = postMessage;
 
         init();
 
         function init () {
-            vmHome.contactList = [{name: 'Atul Vani'}, {name: 'Monica Vani'}, {name: 'Gaurav Vani'}];
-            vmHome.selectedContact = vmHome.contactList[0];
-            vmHome.conversationList = [
-                {author: {name: 'Atul Vani'}, message: 'hey there'},
-                {author: {name: 'Monica Vani'}, message: 'hiii!!!'},
-                {author: {name: 'Atul Vani'}, message: 'how you doing'},
-                {author: {name: 'Monica Vani'}, message: 'm gud, hru'},
-                {author: {name: 'Monica Vani'}, message: 'busy!!!!!'},
-                {author: {name: 'Atul Vani'}, message: 'kinda :('},
-            ];
+            homeService.getContactList(vmHome.user).then(function (response) {
+                vmHome.contactList = response;
+                vmHome.updateSelectedContact(vmHome.contactList[0]);
+            });
         }
 
-        function postMesage () {
-            vmHome.conversationList.push(vmHome.message);
+        function updateSelectedContact (contact) {
+            vmHome.selectedContact = contact;
+            homeService.getConversationHistory(vmHome.user, contact).then(function (response) {
+                vmHome.conversationList = response;
+            });
+        }
+
+        function postMessage (contact) {
+            if (!vmHome.message.trim()) { return; }
+
+            // TODO: user $sce here to bind as html
+            vmHome.conversationList.push({author: vmHome.user, message: vmHome.message});
+            vmHome.message = '';
         }
     }
 })();

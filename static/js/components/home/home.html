@@ -28,14 +28,12 @@
         <md-content flex layout="column" layout-align="end">
             <md-list flex md-colors="{background: 'primary-50'}">
                 <!-- TODO: user virtual repeat here -->
-                <md-list-item ng-repeat="conversation in vmHome.conversationList track by $index">
-                    <img ng-src="{{'http://lorempixel.com/200/200/people?' + conversation.author.name}}" class="md-avatar"
-                        alt="{{conversation.author.name}}" ng-if="conversation.author.name === vmHome.user.name" />
+                <md-list-item ng-repeat="conversation in vmHome.selectedContact.conversationList track by $index">
+                    <img ng-src="{{vmHome.getAuthor(conversation.authorId).avatar}}" alt="{{vmHome.getAuthor(conversation.authorId).name}}"
+                        class="md-avatar" flex-order="{{conversation.authorId === vmHome.user.id ? -1 : 1}}"/>
                     <div class="md-list-item-text" flex>
                         <pre>{{conversation.message}}</pre>
                     </div>
-                    <img ng-src="{{'http://lorempixel.com/200/200/people?' + conversation.author.name}}" class="md-avatar"
-                        alt="{{conversation.author.name}}" ng-if="conversation.author.name !== vmHome.user.name" />
                 </md-list-item>
             </md-list>
             <form ng-submit="vmHome.postMessage()" layout="row">

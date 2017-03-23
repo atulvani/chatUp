@@ -5,24 +5,39 @@
         .module('app')
         .factory('homeService', homeService);
 
-    homeService.$inject = ['$q'];
-    function homeService ($q) {
+    homeService.$inject = ['$q', '$rootScope'];
+    function homeService ($q, $rootScope) {
+        var contactList = [{
+                user: {id: 1, name: 'Jane Doe', email: 'jane.doe@gmail.com', avatar: 'http://lorempixel.com/200/200/people?jane'},
+                conversationList: [
+                    {authorId: 1, message: 'hey there', timestamp: ''},
+                    {authorId: $rootScope.user.id, message: 'hiii!!!', timestamp: ''},
+                    {authorId: 1, message: 'how you doing', timestamp: ''},
+                    {authorId: $rootScope.user.id, message: 'm gud, hru', timestamp: ''},
+                    {authorId: $rootScope.user.id, message: 'busy!!!!!', timestamp: ''},
+                    {authorId: 1, message: 'kinda :(', timestamp: ''},
+                ]
+            }, {
+                user: {id: 2, name: 'Jasmine Doe', email: 'jd@gmail.com', avatar: 'http://lorempixel.com/200/200/people?jasmine'},
+                conversationList: [
+                    {authorId: $rootScope.user.id, message: 'hiii!!!', timestamp: ''},
+                    {authorId: 2, message: 'how are you', timestamp: ''},
+                    {authorId: $rootScope.user.id, message: 'm gud, hru', timestamp: ''},
+                    {authorId: 2, message: 'me good too :)', timestamp: ''},
+                ]
+            }];
+
+        socket.on('newMessage', function (data) {
+            console.log(data);
+        });
+
         return {
             getContactList: function (user) {
-                return $q.resolve([
-                    {name: 'Jane Doe'},
-                    {name: 'Jasmine Doe'},
-                ]);
+                return $q.resolve(contactList);
             },
-            getConversationHistory: function (user, contact) {
-                return $q.resolve([
-                    {author: user, message: 'hey there'},
-                    {author: contact, message: 'hiii!!!'},
-                    {author: user, message: 'how you doing'},
-                    {author: contact, message: 'm gud, hru'},
-                    {author: contact, message: 'busy!!!!!'},
-                    {author: user, message: 'kinda :('},
-                ]);
+            postMessage: function (userId, message) {
+                // socket.emit('postMessage', {});
+                return $q.resolve(true);
             }
         };
     }

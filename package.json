@@ -25,6 +25,7 @@
     "angular-messages": "^1.6.3",
     "angular-route": "^1.6.3",
     "angular-sanitize": "^1.6.3",
-    "express": "^4.15.2"
+    "express": "^4.15.2",
+    "socket.io": "^1.7.3"
   }
 }

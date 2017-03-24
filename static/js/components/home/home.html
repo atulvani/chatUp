@@ -1,46 +1,45 @@
 <div layout="row" layout-fill>
     <div layout="column" hide-xs flex-sm="40" flex-md="30" flex-lg="25">
         <md-toolbar class="md-accent">
-            <div class="md-toolbar-tools">
-                <h2 md-truncate flex>Contacts</h2>
-            </div>
+            <div class="md-toolbar-tools"><h2 md-truncate flex>Contacts</h2></div>
         </md-toolbar>
         <md-content flex md-colors="{background: 'grey-200'}">
             <md-list>
-                <md-list-item class="md-3-line" ng-repeat="contact in vmHome.contactList" ng-click="vmHome.updateSelectedContact(contact)"
+                <md-list-item class="md-3-line" ng-repeat="contact in vmHome.homeService.getContactList() track by contact.id"
+                    ng-click="vmHome.updateSelectedChatGroup(contact)"
                     md-colors="{background: vmHome.selectedContact === contact ? 'primary-50' : 'grey-50'}">
-                    <img ng-src="{{'http://lorempixel.com/200/200/people?' + contact.name}}" class="md-avatar" alt="{{contact.name}}" />
+                    <img ng-src="{{vmHome.getAvatar(contact.id)}}" class="md-avatar" alt="{{contact.name}}" />
                     <div class="md-list-item-text">
-                        <h3>{{contact.name}}</h3>
-                        <p>last seen 3 days ago</p>
+                        <h3 ng-class="{'highlight': contact.hasUpdates}">{{contact.name}}</h3>
                     </div>
                 </md-list-item>
             </md-list>
         </md-content>
     </div>
     <md-divider></md-divider>
-    <div flex layout="column" layout-fill layout-align="spece-between streach">
+    <div flex layout="column" layout-fill layout-align="center center" ng-show="!vmHome.selectedContact">
+        <p>Hello {{vmHome.user.name}}, select a contact from the left to begin.</p>
+    </div>
+    <div flex layout="column" layout-fill layout-align="specex-between streach" ng-show="vmHome.selectedContact">
         <md-toolbar>
             <div class="md-toolbar-tools">
-                <h2 md-truncate flex>{{vmHome.selectedContact.name}}</h2>
+                <h2 md-truncate flex>{{vmHome.selectedContact.name}}, {{vmHome.user.name}}</h2>
             </div>
         </md-toolbar>
         <md-content flex layout="column" layout-align="end">
-            <md-list flex md-colors="{background: 'primary-50'}">
-                <!-- TODO: user virtual repeat here -->
-                <md-list-item ng-repeat="conversation in vmHome.selectedContact.conversationList track by $index">
-                    <img ng-src="{{vmHome.getAuthor(conversation.authorId).avatar}}" alt="{{vmHome.getAuthor(conversation.authorId).name}}"
-                        class="md-avatar" flex-order="{{conversation.authorId === vmHome.user.id ? -1 : 1}}"/>
-                    <div class="md-list-item-text" flex>
-                        <pre>{{conversation.message}}</pre>
-                    </div>
+            <md-list flex md-colors="{background: 'primary-50'}" style="overflow: scroll;">
+                <md-list-item ng-repeat="message in vmHome.selectedChatGroup.messageList track by $index">
+                    <img ng-src="{{vmHome.getAvatar(message.author)}}" alt="{{vmHome.getUser(message.author).name}}"
+                        class="md-avatar" flex-order="{{message.author === vmHome.user.id ? -1 : 1}}"/>
+                    <div class="md-list-item-text" flex><pre>{{message.message}}</pre></div>
                 </md-list-item>
             </md-list>
-            <form ng-submit="vmHome.postMessage()" layout="row">
+            <form ng-submit="vmHome.homeService.postMessage(vmHome.selectedChatGroup)" layout="row">
                 <md-input-container flex>
                     <label>Message</label>
-                    <textarea ng-model="vmHome.message" ng-keyup="$event.which === 13 && !$event.shiftKey && vmHome.postMessage()"
-                    md-no-resize md-no-autogrow md-autofocus>
+                    <textarea ng-model="vmHome.selectedChatGroup.message"
+                        ng-keyup="$event.which === 13 && !$event.shiftKey && vmHome.homeService.postMessage(vmHome.selectedChatGroup)"
+                        md-no-resize md-no-autogrow md-autofocus>
                     </textarea>
                 </md-input-container>
                 <md-button type="submit" class="md-raised md-primary">Send</md-button>

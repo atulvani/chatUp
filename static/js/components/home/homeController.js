@@ -5,47 +5,33 @@
         .module('app')
         .controller('homeController', homeController);
 
-    homeController.$inject = ['homeService', '$sce', '$rootScope'];
-    function homeController (homeService, $sce, $rootScope) {
+    homeController.$inject = ['homeService', '$rootScope'];
+    function homeController (homeService, $rootScope) {
         var vmHome = this;
 
         vmHome.user = $rootScope.user;
-        vmHome.contactList = [];
+        vmHome.homeService = homeService;
         vmHome.selectedContact = null;
-        vmHome.message = '';
+        vmHome.selectedChatGroup = null;
 
-        vmHome.getAuthor = getAuthor;
-        vmHome.updateSelectedContact = updateSelectedContact;
-        vmHome.postMessage = postMessage;
+        vmHome.getAvatar = getAvatar;
+        vmHome.getUser = getUser;
+        vmHome.updateSelectedChatGroup = updateSelectedChatGroup;
 
-        init();
-
-        function init () {
-            homeService.getContactList(vmHome.user).then(function (response) {
-                vmHome.contactList = response;
-                vmHome.updateSelectedContact(vmHome.contactList[0]);
-            });
+        function getAvatar (id) {
+            return getUser(id).avatar || 'http://lorempixel.com/200/200/people';
         }
 
-        function getAuthor (userId) {
-            if (vmHome.user.id === userId) {
-                return vmHome.user;
-            } else {
-                return _.find(vmHome.contactList, {user: {id: userId}}).user;
-            }
+        function getUser (id) {
+            if ($rootScope.user.id === id) { return $rootScope.user; }
+            return _.find(homeService.getContactList(), {id: id});
         }
 
-        function updateSelectedContact (contact) {
+        function updateSelectedChatGroup (contact) {
+            _.set(vmHome, 'selectedContact.hasUpdates', false);
             vmHome.selectedContact = contact;
-        }
-
-        function postMessage (contact) {
-            if (!vmHome.message.trim()) { return; }
-            homeService.postMessage(vmHome.selectedContact.user.id, vmHome.message.trim());
-
-            // TODO: user $sce here to bind as html
-            vmHome.selectedContact.conversationList.push({author: vmHome.user, message: vmHome.message});
-            vmHome.message = '';
+            vmHome.selectedChatGroup = homeService.getChatGroup(contact.id);
+            _.set(vmHome, 'selectedContact.hasUpdates', false);
         }
     }
 })();

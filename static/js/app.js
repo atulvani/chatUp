@@ -1,7 +1,7 @@
 'use strict';
 
 (function() {
-    angular.module('app', ['ngRoute', 'ngMaterial', 'ngSanitize']).config(config).controller('appController', appController);
+    angular.module('app', ['ngRoute', 'ngMaterial']).config(config).controller('appController', appController);
 
     config.$inject = ['$locationProvider', '$routeProvider'];
     function config($locationProvider, $routeProvider) {
@@ -11,9 +11,7 @@
             templateUrl: '/js/components/home/home.html',
             controller: 'homeController',
             controllerAs: 'vmHome',
-            resolve: {
-                auth: function(authService) { return authService.auth(); }
-            }
+            resolve: {auth: function(authService) { return authService.auth(); }}
         }).otherwise('/');
     }
 

@@ -25,7 +25,7 @@
                             title: 'Allow Popup',
                             textContent: 'Please enable popups in your borwser and then hit "Continue".',
                             ok: 'Continue'
-                        })).then(location.reload);
+                        })).then(function () { location.reload(); });
                     } else {
                         $mdDialog.show($mdDialog.alert({
                             title: 'Authentication Error',

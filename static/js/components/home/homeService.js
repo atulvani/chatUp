@@ -19,7 +19,6 @@
         };
 
         function init () {
-            // TODO: fix this message getting lost at times, rendering user with no contacts to chat with
             $rootScope.socket.on('updateContactList', function (updatedContactList) {
                 $timeout(function () {
                     contactList = updatedContactList;
@@ -32,6 +31,7 @@
                     _.find(contactList, {id: author}).hasUpdates = true;
                 });
             });
+            $rootScope.socket.emit('getContactList');
         }
 
         function getChatGroup (id) {

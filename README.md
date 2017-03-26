@@ -16,5 +16,4 @@ npm start
 ```
 
 ## Known bugs
-* At times the contact list appear empty even when registered users exist. This happens due to the update broadcast getting lost somewhere. Quick fix is the reload the page.
 * When chat history is loaded after getting a new message, the new message appears twice.

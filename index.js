@@ -46,6 +46,12 @@ io.on('connection', function(socket) {
         }
     });
 
+    socket.on('getContactList', function () {
+        userDb.find({}, function (err, contactList) {
+            socket.emit('updateContactList', contactList);
+        });
+    });
+
     socket.on('postMessage', function (from, to, message) {
         chatGroupDb.update({authorList: [from, to].sort()}, {$push: {messageList: {author: from, message: message}}}, {upsert: true}, function () {
             socket.to(userSocketMapping[to]).emit('postMessage', from, message);
